@@ -27,6 +27,7 @@ package de.bluecolored.bluemap.common.rendermanager;
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector2l;
 import de.bluecolored.bluemap.common.debug.DebugDump;
+import de.bluecolored.bluemap.common.live.LiveModifiedTilesRegistry;
 import de.bluecolored.bluemap.core.logger.Logger;
 import de.bluecolored.bluemap.core.map.BmMap;
 import de.bluecolored.bluemap.core.map.renderstate.TileActionResolver.ActionAndNextState;
@@ -225,6 +226,8 @@ public class WorldRegionRenderTask implements MapRenderTask {
                     (int) (System.currentTimeMillis() / 1000),
                     resultState
             ));
+
+            LiveModifiedTilesRegistry.record(map.getId(), tile.getX(), tile.getY());
 
         }
 

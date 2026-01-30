@@ -26,12 +26,12 @@ package de.bluecolored.bluemap.common.web;
 
 import de.bluecolored.bluemap.common.config.PluginConfig;
 import de.bluecolored.bluemap.common.live.LiveMarkersDataSupplier;
+import de.bluecolored.bluemap.common.live.LiveModifiedTilesRequestHandler;
 import de.bluecolored.bluemap.common.live.LivePlayersDataSupplier;
 import de.bluecolored.bluemap.common.serverinterface.Server;
-import de.bluecolored.bluemap.common.serverinterface.ServerWorld;
 import de.bluecolored.bluemap.core.map.BmMap;
 import de.bluecolored.bluemap.core.storage.MapStorage;
-import de.bluecolored.bluemap.core.storage.Storage;
+import de.bluecolored.bluemap.common.web.http.HttpRequestHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -43,16 +43,18 @@ public class MapRequestHandler extends RoutingRequestHandler {
     public MapRequestHandler(BmMap map, Server serverInterface, PluginConfig pluginConfig, Predicate<UUID> playerFilter) {
         this(map.getStorage(),
                 new LivePlayersDataSupplier(serverInterface, pluginConfig, map.getWorld(), playerFilter),
-                new LiveMarkersDataSupplier(map.getMarkerSets()));
+                new LiveMarkersDataSupplier(map.getMarkerSets()),
+                new LiveModifiedTilesRequestHandler(map.getId()));
     }
 
     public MapRequestHandler(MapStorage mapStorage) {
-        this(mapStorage, null, null);
+        this(mapStorage, null, null, null);
     }
 
     public MapRequestHandler(MapStorage mapStorage,
                              @Nullable Supplier<String> livePlayersDataSupplier,
-                             @Nullable Supplier<String> liveMarkerDataSupplier) {
+                             @Nullable Supplier<String> liveMarkerDataSupplier,
+                             @Nullable HttpRequestHandler liveModifiedTilesHandler) {
 
         register(".*", new MapStorageRequestHandler(mapStorage));
 
@@ -66,6 +68,10 @@ public class MapRequestHandler extends RoutingRequestHandler {
             register("live/markers\\.json", "", new JsonDataRequestHandler(
                     new CachedRateLimitDataSupplier(liveMarkerDataSupplier,10000)
             ));
+        }
+
+        if (liveModifiedTilesHandler != null) {
+            register("live/modified-chunks\\.json", "", liveModifiedTilesHandler);
         }
     }
 
