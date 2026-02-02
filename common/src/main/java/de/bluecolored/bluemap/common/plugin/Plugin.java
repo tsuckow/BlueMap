@@ -340,7 +340,7 @@ public class Plugin implements ServerEventListener {
                             renderManager.scheduleRenderTasksNext(maps.values().stream()
                                     .filter(map -> pluginState.getMapState(map).isUpdateEnabled())
                                     .sorted(Comparator.comparing(bmMap -> bmMap.getMapSettings().getSorting()))
-                                    .map(map -> MapUpdatePreparationTask.updateMap(map, renderManager))
+                                    .map(map -> MapUpdatePreparationTask.updateMap(map, serverInterface, renderManager))
                                     .toArray(RenderTask[]::new));
                         }
                     };

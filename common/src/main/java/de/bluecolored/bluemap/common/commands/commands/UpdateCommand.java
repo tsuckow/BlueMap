@@ -162,6 +162,7 @@ public class UpdateCommand {
         plugin.getRenderManager().scheduleRenderTasksNext(maps.stream()
                 .map(map -> MapUpdatePreparationTask.builder()
                         .map(map)
+                        .server(plugin.getServerInterface())
                         .center(center)
                         .radius(radius)
                         .force(updateStrategy)
