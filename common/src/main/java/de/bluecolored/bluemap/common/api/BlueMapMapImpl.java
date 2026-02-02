@@ -124,7 +124,7 @@ public class BlueMapMapImpl implements BlueMapMap {
         plugin.startWatchingMap(map);
         plugin.getPluginState().getMapState(map).setUpdateEnabled(true);
         plugin.getRenderManager().scheduleRenderTaskNext(MapUpdatePreparationTask
-                .updateMap(map, plugin.getRenderManager()));
+            .updateMap(map, plugin.getServerInterface(), plugin.getRenderManager()));
     }
 
     private synchronized void freeze() {

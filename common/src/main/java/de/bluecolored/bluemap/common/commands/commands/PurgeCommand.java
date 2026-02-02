@@ -83,7 +83,7 @@ public class PurgeCommand {
 
             if (updateMap) {
                 plugin.getRenderManager().scheduleRenderTask(MapUpdatePreparationTask
-                        .updateMap(map, plugin.getRenderManager()));
+                    .updateMap(map, plugin.getServerInterface(), plugin.getRenderManager()));
             }
 
             return true;

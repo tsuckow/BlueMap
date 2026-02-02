@@ -52,7 +52,7 @@ public class UnfreezeCommand {
                 text("frozen").color(FROZEN_COLOR)
         ).color(BASE_COLOR));
         plugin.getRenderManager().scheduleRenderTask(MapUpdatePreparationTask
-                .updateMap(map, plugin.getRenderManager()));
+            .updateMap(map, plugin.getServerInterface(), plugin.getRenderManager()));
         plugin.save();
     }
 
