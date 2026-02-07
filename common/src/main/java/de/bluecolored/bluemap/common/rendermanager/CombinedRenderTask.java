@@ -29,7 +29,7 @@ import java.util.*;
 public class CombinedRenderTask<T extends RenderTask> implements RenderTask {
 
     private final String description;
-    private final List<T> tasks;
+    protected final List<T> tasks;
     private int currentTaskIndex;
 
     public CombinedRenderTask(String description, Collection<T> tasks) {
@@ -37,6 +37,10 @@ public class CombinedRenderTask<T extends RenderTask> implements RenderTask {
         this.tasks = Collections.unmodifiableList(new ArrayList<>(tasks));
 
         this.currentTaskIndex = 0;
+    }
+
+    public List<T> getTasks() {
+        return tasks;
     }
 
     @Override

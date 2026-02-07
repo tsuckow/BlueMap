@@ -28,6 +28,7 @@ import de.bluecolored.bluemap.common.config.PluginConfig;
 import de.bluecolored.bluemap.common.live.LiveMarkersDataSupplier;
 import de.bluecolored.bluemap.common.live.LiveModifiedTilesRequestHandler;
 import de.bluecolored.bluemap.common.live.LivePlayersDataSupplier;
+import de.bluecolored.bluemap.common.rendermanager.RenderManager;
 import de.bluecolored.bluemap.common.serverinterface.Server;
 import de.bluecolored.bluemap.core.map.BmMap;
 import de.bluecolored.bluemap.core.storage.MapStorage;
@@ -40,10 +41,17 @@ import java.util.function.Supplier;
 
 public class MapRequestHandler extends RoutingRequestHandler {
 
-    public MapRequestHandler(BmMap map, Server serverInterface, PluginConfig pluginConfig, Predicate<UUID> playerFilter) {
+    public MapRequestHandler(BmMap map, Server serverInterface, PluginConfig pluginConfig,
+            Predicate<UUID> playerFilter) {
+        this(map, serverInterface, pluginConfig, playerFilter, () -> null);
+    }
+
+    public MapRequestHandler(BmMap map, Server serverInterface, PluginConfig pluginConfig,
+            Predicate<UUID> playerFilter,
+            Supplier<RenderManager> renderManagerSupplier) {
         this(map.getStorage(),
                 new LivePlayersDataSupplier(serverInterface, pluginConfig, map.getWorld(), playerFilter),
-                new LiveMarkersDataSupplier(map.getMarkerSets()),
+                new LiveMarkersDataSupplier(map, renderManagerSupplier::get),
                 new LiveModifiedTilesRequestHandler(map));
     }
 
