@@ -38,6 +38,7 @@ import de.bluecolored.bluemap.common.plugin.skins.PlayerSkinUpdater;
 import de.bluecolored.bluemap.common.rendermanager.MapUpdatePreparationTask;
 import de.bluecolored.bluemap.common.rendermanager.RenderManager;
 import de.bluecolored.bluemap.common.rendermanager.RenderTask;
+import de.bluecolored.bluemap.common.rendermanager.RenderTaskPriorityComparator;
 import de.bluecolored.bluemap.common.serverinterface.Server;
 import de.bluecolored.bluemap.common.serverinterface.ServerEventListener;
 import de.bluecolored.bluemap.common.serverinterface.ServerWorld;
@@ -269,6 +270,9 @@ public class Plugin implements ServerEventListener {
 
                 //initialize render manager
                 renderManager = new RenderManager();
+                // Prioritize tasks that touch fewer regions and are closer to
+                // online players on their respective maps.
+                renderManager.setTaskPriorityComparator(new RenderTaskPriorityComparator(serverInterface));
 
                 //update webapp and settings
                 if (webappConfig.isEnabled())

@@ -49,6 +49,8 @@ public class RenderManager {
     private final LinkedList<RenderTask> renderTasks;
     private final Map<RenderTask, Long> completedTasks;
 
+    private volatile Comparator<RenderTask> taskPriorityComparator;
+
     public RenderManager() {
         this.id = nextRenderManagerIndex.getAndIncrement();
         this.nextWorkerThreadIndex = new AtomicInteger(0);
@@ -69,6 +71,10 @@ public class RenderManager {
                 return size() > 10;
             }
         };
+    }
+
+    public void setTaskPriorityComparator(Comparator<RenderTask> taskPriorityComparator) {
+        this.taskPriorityComparator = taskPriorityComparator;
     }
 
     public void start(int threadCount) throws IllegalStateException {
@@ -306,6 +312,10 @@ public class RenderManager {
         synchronized (this.renderTasks) {
             while (this.renderTasks.isEmpty())
                 this.renderTasks.wait(10000);
+
+            if (this.newTask && taskPriorityComparator != null && renderTasks.size() > 1) {
+                renderTasks.sort(taskPriorityComparator);
+            }
 
             task = this.renderTasks.getFirst();
             if (this.newTask) {

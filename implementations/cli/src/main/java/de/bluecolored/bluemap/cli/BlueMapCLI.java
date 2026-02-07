@@ -37,6 +37,7 @@ import de.bluecolored.bluemap.common.plugin.MapUpdateService;
 import de.bluecolored.bluemap.common.rendermanager.MapUpdatePreparationTask;
 import de.bluecolored.bluemap.common.rendermanager.RenderManager;
 import de.bluecolored.bluemap.common.rendermanager.RenderTask;
+import de.bluecolored.bluemap.common.rendermanager.RenderTaskPriorityComparator;
 import de.bluecolored.bluemap.common.rendermanager.TileUpdateStrategy;
 import de.bluecolored.bluemap.common.web.*;
 import de.bluecolored.bluemap.common.web.http.HttpRequestHandler;
@@ -89,6 +90,9 @@ public class BlueMapCLI {
 
         //create renderManager
         RenderManager renderManager = new RenderManager();
+        // CLI has no live server instance, so player information is not
+        // available here. Still, prefer tasks with fewer regions.
+        renderManager.setTaskPriorityComparator(new RenderTaskPriorityComparator(null));
 
         //load maps
         Predicate<String> mapFilter = mapId -> true;
