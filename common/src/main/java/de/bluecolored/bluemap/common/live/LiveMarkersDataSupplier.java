@@ -41,7 +41,7 @@ import de.bluecolored.bluemap.core.util.Grid;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -83,8 +83,10 @@ public class LiveMarkersDataSupplier implements Supplier<String> {
 
         Grid regionGrid = map.getWorld().getRegionGrid();
 
-        Set<Vector2i> currentRegions = new HashSet<>();
-        Set<Vector2i> scheduledRegions = new HashSet<>();
+        // Use LinkedHashSet to preserve queue-order of regions as we
+        // traverse the current and scheduled tasks.
+        Set<Vector2i> currentRegions = new LinkedHashSet<>();
+        Set<Vector2i> scheduledRegions = new LinkedHashSet<>();
 
         RenderTask current = renderManager.getCurrentRenderTask();
         if (current != null)
@@ -113,7 +115,7 @@ public class LiveMarkersDataSupplier implements Supplier<String> {
             set.put("current-" + id, marker);
         }
 
-        // queued (blue gradient) regions
+        // queued (blue gradient) regions, including queue position in label
         for (Vector2i region : scheduledRegions) {
             float t = scheduledCount <= 1 ? 0.5f : (float) index / (float) (scheduledCount - 1);
             // blue gradient from lighter to deeper blue (0-255 RGB)
@@ -123,7 +125,8 @@ public class LiveMarkersDataSupplier implements Supplier<String> {
 
             ShapeMarker marker = createRegionShapeMarker(regionGrid, region, 64f);
             String id = region.getX() + "," + region.getY();
-            marker.setLabel("Queued region " + id);
+            int queuePosition = index + 1;
+            marker.setLabel("Queued #" + queuePosition + " region " + id);
             marker.setDetail("Scheduled render for region " + id);
             marker.setColors(
                     new Color(r, g, b, 1f), // solid outline
