@@ -1,0 +1,4 @@
+{
+    // Bluemap does not use auto-formatting. Avoid changing format of unrelated code when editing.
+    "java.format.enabled": false
+}
